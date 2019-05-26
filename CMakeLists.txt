@@ -1,6 +1,7 @@
 set(COMPONENT_SRCS
     src/uev.c
     src/timer.c
+    src/event.c
 )
 set(COMPONENT_ADD_INCLUDEDIRS
     include
