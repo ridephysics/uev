@@ -78,7 +78,8 @@ typedef enum {
 
 #define UEV_EG_BIT_IO (1 << 0)
 #define UEV_EG_BIT_EVENT (1 << 1)
-#define UEV_EG_MASK (UEV_EG_BIT_IO | UEV_EG_BIT_EVENT)
+#define UEV_EG_BIT_TIMER (1 << 2)
+#define UEV_EG_MASK (UEV_EG_BIT_IO | UEV_EG_BIT_EVENT | UEV_EG_BIT_TIMER)
 
 /* Main libuEv context type */
 typedef struct {
