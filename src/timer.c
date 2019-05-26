@@ -26,11 +26,19 @@
 
 #include <uev/uev.h>
 
+#ifdef CONFIG_TARGET_PLATFORM_ESP8266
+uint64_t esp8266_get_time_since_boot(void);
+#endif
+
 uint64_t _uev_timer_now(void) {
+#ifdef CONFIG_TARGET_PLATFORM_ESP8266
+	return esp8266_get_time_since_boot();
+#else
 	int64_t now = esp_timer_get_time();
 	if (now <= 0)
 		return 0;
 	return (uint64_t) now;
+#endif
 }
 
 

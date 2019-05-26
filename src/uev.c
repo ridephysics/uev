@@ -30,16 +30,30 @@
 
 #include <uev/uev.h>
 
+#ifndef portYIELD_FROM_ISR
+#define portYIELD_FROM_ISR portYIELD
+#endif
+
 void _uev_lock_init(UEV_LOCK *l) {
+#ifndef CONFIG_TARGET_PLATFORM_ESP8266
 	vPortCPUInitializeMutex(l);
+#endif
 }
 
 void _uev_lock(UEV_LOCK *l) {
+#ifdef CONFIG_TARGET_PLATFORM_ESP8266
+	portENTER_CRITICAL();
+#else
 	portENTER_CRITICAL(l);
+#endif
 }
 
 void _uev_unlock(UEV_LOCK *l) {
+#ifdef CONFIG_TARGET_PLATFORM_ESP8266
+	portEXIT_CRITICAL();
+#else
 	portEXIT_CRITICAL(l);
+#endif
 }
 
 void _uev_set_flags(uev_ctx_t *ctx, const EventBits_t bits) {

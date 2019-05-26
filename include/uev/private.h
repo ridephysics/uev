@@ -30,7 +30,11 @@
 #include <freertos/event_groups.h>
 #include <stdatomic.h>
 
+#ifdef CONFIG_TARGET_PLATFORM_ESP8266
+#define UEV_LOCK void *
+#else
 #define UEV_LOCK portMUX_TYPE
+#endif
 
 /*
  * List functions.
