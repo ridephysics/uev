@@ -25,7 +25,6 @@
 #include <errno.h>
 #include <fcntl.h>		/* O_CLOEXEC */
 #include <string.h>		/* memset() */
-#include <sys/select.h>		/* for select() workaround */
 #include <unistd.h>		/* close(), read() */
 #include <esp_timer.h>
 
