@@ -123,8 +123,11 @@ int uev_timer_set(uev_t *w, int timeout, int period)
 	w->u.t.timeout = timeout;
 	w->u.t.period  = period;
 
-	if (atomic_load(&w->ctx->running)) {
+	if (atomic_load(&w->ctx->running) && w->u.t.timeout) {
 		w->u.t.deadline = now / 1000 + timeout;
+	}
+	else {
+		w->u.t.deadline  = 0;
 	}
 
 	if (w->type == UEV_TIMER_TS_TYPE) {
