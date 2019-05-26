@@ -26,6 +26,13 @@
 
 #include <uev/uev.h>
 
+uint64_t _uev_timer_now(void) {
+	int64_t now = esp_timer_get_time();
+	if (now <= 0)
+		return 0;
+	return (uint64_t) now;
+}
+
 
 /**
  * Create and start a timer watcher
@@ -99,7 +106,7 @@ int uev_timer_set(uev_t *w, int timeout, int period)
 		return -1;
 	}
 
-	int64_t now = esp_timer_get_time();
+	uint64_t now = _uev_timer_now();
 
 	if (w->type == UEV_TIMER_TS_TYPE) {
 		_uev_lock(&w->u.t.lock);

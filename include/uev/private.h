@@ -137,6 +137,7 @@ int _uev_watcher_stop  (struct uev *w);
 int _uev_watcher_active(struct uev *w);
 int _uev_watcher_rearm (struct uev *w);
 
+uint64_t _uev_timer_now(void);
 void _uev_lock_init(UEV_LOCK *l);
 void _uev_lock(UEV_LOCK *l);
 void _uev_unlock(UEV_LOCK *l);

@@ -239,7 +239,7 @@ int uev_run(uev_ctx_t *ctx, int flags)
 	}
 
 	while (atomic_load(&ctx->running) && ctx->watchers) {
-		int64_t now = esp_timer_get_time() / 1000;
+		uint64_t now = _uev_timer_now() / 1000;
 		TickType_t tickstowait;
 
 		if (next_deadline == 0xffffffffffffffff)
@@ -274,7 +274,7 @@ int uev_run(uev_ctx_t *ctx, int flags)
 
 			case UEV_TIMER_TS_TYPE:
 			case UEV_TIMER_TYPE: {
-				int64_t now = esp_timer_get_time() / 1000;
+				uint64_t now = _uev_timer_now() / 1000;
 
 				if (w->type == UEV_TIMER_TS_TYPE) {
 					_uev_lock(&w->u.t.lock);
