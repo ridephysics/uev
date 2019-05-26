@@ -327,7 +327,7 @@ int uev_run(uev_ctx_t *ctx, int flags)
 					}
 				}
 
-				if (w->u.t.deadline < next_deadline)
+				if (w->u.t.deadline && w->u.t.deadline < next_deadline)
 					next_deadline = w->u.t.deadline;
 
 				if (w->type == UEV_TIMER_TS_TYPE) {
