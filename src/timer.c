@@ -57,7 +57,7 @@ int uev_timer_init2(uev_ctx_t *ctx, uev_t *w, uev_cb_t *cb, void *arg, int timeo
 		return -1;
 	}
 
-	vPortCPUInitializeMutex(&w->u.t.lock);
+	_uev_lock_init(&w->u.t.lock);
 
 	if (_uev_watcher_init(ctx, w, threadsafe ? UEV_TIMER_TS_TYPE : UEV_TIMER_TYPE, cb, arg, -1, UEV_READ))
 		return -1;
@@ -102,7 +102,7 @@ int uev_timer_set(uev_t *w, int timeout, int period)
 	int64_t now = esp_timer_get_time();
 
 	if (w->type == UEV_TIMER_TS_TYPE) {
-		portENTER_CRITICAL(&w->u.t.lock);
+		_uev_lock(&w->u.t.lock);
 	}
 
 	w->u.t.timeout = timeout;
@@ -113,7 +113,7 @@ int uev_timer_set(uev_t *w, int timeout, int period)
 	}
 
 	if (w->type == UEV_TIMER_TS_TYPE) {
-		portEXIT_CRITICAL(&w->u.t.lock);
+		_uev_unlock(&w->u.t.lock);
 	}
 
 	return _uev_watcher_start(w);

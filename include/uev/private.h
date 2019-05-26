@@ -30,6 +30,8 @@
 #include <freertos/event_groups.h>
 #include <stdatomic.h>
 
+#define UEV_LOCK portMUX_TYPE
+
 /*
  * List functions.
  */
@@ -111,7 +113,7 @@ struct uev;
 								\
 		/* Timer watchers, time in milliseconds */	\
 		struct {					\
-			portMUX_TYPE lock;			\
+			UEV_LOCK lock;			\
 			int timeout;				\
 			int period;				\
 			uint64_t deadline;			\
@@ -134,6 +136,10 @@ int _uev_watcher_start (struct uev *w);
 int _uev_watcher_stop  (struct uev *w);
 int _uev_watcher_active(struct uev *w);
 int _uev_watcher_rearm (struct uev *w);
+
+void _uev_lock_init(UEV_LOCK *l);
+void _uev_lock(UEV_LOCK *l);
+void _uev_unlock(UEV_LOCK *l);
 
 #endif /* LIBUEV_PRIVATE_H_ */
 

@@ -31,6 +31,18 @@
 
 #include <uev/uev.h>
 
+void _uev_lock_init(UEV_LOCK *l) {
+	vPortCPUInitializeMutex(l);
+}
+
+void _uev_lock(UEV_LOCK *l) {
+	portENTER_CRITICAL(l);
+}
+
+void _uev_unlock(UEV_LOCK *l) {
+	portEXIT_CRITICAL(l);
+}
+
 
 /* Private to libuEv, do not use directly! */
 int _uev_watcher_init(uev_ctx_t *ctx, uev_t *w, uev_type_t type, uev_cb_t *cb, void *arg, int fd, int events)
@@ -264,7 +276,7 @@ int uev_run(uev_ctx_t *ctx, int flags)
 				int64_t now = esp_timer_get_time() / 1000;
 
 				if (w->type == UEV_TIMER_TS_TYPE) {
-					portENTER_CRITICAL(&w->u.t.lock);
+					_uev_lock(&w->u.t.lock);
 				}
 
 				//ESP_LOGD("uev", "now=%llu deadline=%llu", (unsigned long long)now, (unsigned long long)w->u.t.deadline);
@@ -286,7 +298,7 @@ int uev_run(uev_ctx_t *ctx, int flags)
 					next_deadline = w->u.t.deadline;
 
 				if (w->type == UEV_TIMER_TS_TYPE) {
-					portEXIT_CRITICAL(&w->u.t.lock);
+					_uev_unlock(&w->u.t.lock);
 				}
 				break;
 			}
