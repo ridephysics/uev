@@ -344,16 +344,6 @@ int uev_run(uev_ctx_t *ctx, int flags)
 				w->cb(w, w->arg, events & UEV_EVENT_MASK);
 		}
 
-		if (!bits) {
-			// TODO: timeout
-		}
-		if (bits & UEV_EG_BIT_EVENT) {
-			// TODO
-		}
-		if (bits & UEV_EG_BIT_IO) {
-			// TODO
-		}
-
 		if (flags & UEV_ONCE)
 			break;
 	}
