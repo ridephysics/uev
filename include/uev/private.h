@@ -143,6 +143,7 @@ uint64_t _uev_timer_now(void);
 void _uev_lock_init(UEV_LOCK *l);
 void _uev_lock(UEV_LOCK *l);
 void _uev_unlock(UEV_LOCK *l);
+void _uev_set_flags(uev_ctx_t *ctx, const EventBits_t bits);
 
 #endif /* LIBUEV_PRIVATE_H_ */
 

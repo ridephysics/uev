@@ -42,6 +42,20 @@ void _uev_unlock(UEV_LOCK *l) {
 	portEXIT_CRITICAL(l);
 }
 
+void _uev_set_flags(uev_ctx_t *ctx, const EventBits_t bits) {
+	if (xPortInIsrContext()) {
+		BaseType_t xHigherPriorityTaskWoken = pdFALSE;
+		xEventGroupSetBitsFromISR(ctx->egh, bits, &xHigherPriorityTaskWoken);
+
+		if (xHigherPriorityTaskWoken == pdTRUE) {
+			portYIELD_FROM_ISR();
+		}
+	}
+	else {
+		xEventGroupSetBits(ctx->egh, bits);
+	}
+}
+
 
 /* Private to libuEv, do not use directly! */
 int _uev_watcher_init(uev_ctx_t *ctx, uev_t *w, uev_type_t type, uev_cb_t *cb, void *arg, int fd, int events)
