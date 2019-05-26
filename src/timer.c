@@ -123,6 +123,10 @@ int uev_timer_set(uev_t *w, int timeout, int period)
 		_uev_unlock(&w->u.t.lock);
 	}
 
+	// in case this is run from another thread or an ISR, we need to wake up
+	// the event loop to recalculate the timers
+	_uev_set_flags(w->ctx, UEV_EG_BIT_TIMER);
+
 	return _uev_watcher_start(w);
 }
 
