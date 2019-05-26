@@ -281,8 +281,6 @@ int uev_run(uev_ctx_t *ctx, int flags)
 		else
 			tickstowait = next_deadline ? ((next_deadline - now) / portTICK_PERIOD_MS) : 0;
 
-		//ESP_LOGD("uev", "deadline=%llu ttw=%llu", (unsigned long long)next_deadline, (unsigned long long)tickstowait);
-
 		EventBits_t bits = xEventGroupWaitBits(ctx->egh, UEV_EG_MASK, pdTRUE, pdFALSE, tickstowait);
 		next_deadline = 0xffffffffffffffff;
 
@@ -312,7 +310,6 @@ int uev_run(uev_ctx_t *ctx, int flags)
 					_uev_lock(&w->u.t.lock);
 				}
 
-				//ESP_LOGD("uev", "now=%llu deadline=%llu", (unsigned long long)now, (unsigned long long)w->u.t.deadline);
 				if (now > 0 && w->u.t.deadline && now > w->u.t.deadline) {
 					runcb = true;
 					events = UEV_READ;
