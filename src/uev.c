@@ -139,6 +139,8 @@ int uev_init(uev_ctx_t *ctx)
 	ctx->egh = xEventGroupCreateStatic(&ctx->egb);
 	configASSERT(ctx->egh);
 
+	atomic_init(&ctx->running, 0);
+
 	return 0;
 }
 
