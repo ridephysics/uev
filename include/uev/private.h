@@ -84,7 +84,9 @@ typedef enum {
 typedef struct {
 	atomic_int         running;
 	EventGroupHandle_t egh;
+#if configSUPPORT_STATIC_ALLOCATION
 	StaticEventGroup_t egb;
+#endif
 	struct uev     *watchers;
 } uev_ctx_t;
 

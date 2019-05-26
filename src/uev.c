@@ -136,7 +136,11 @@ int uev_init(uev_ctx_t *ctx)
 
 	memset(ctx, 0, sizeof(*ctx));
 
+#if configSUPPORT_STATIC_ALLOCATION
 	ctx->egh = xEventGroupCreateStatic(&ctx->egb);
+#else
+	ctx->egh = xEventGroupCreate();
+#endif
 	configASSERT(ctx->egh);
 
 	atomic_init(&ctx->running, 0);
