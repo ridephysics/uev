@@ -179,20 +179,34 @@ int uev_timer_start(uev_t *w)
 	return uev_timer_set(w, w->u.t.timeout, w->u.t.period);
 }
 
-/**
- * Stop and unregister a timer watcher
- * @param w  Watcher to stop
- *
- * @return POSIX OK(0) or non-zero with @param errno set on error.
- */
-// TODO: the public API should remove this from the list
-int uev_timer_stop(uev_t *w)
+/* Private to libuEv, do not use directly! */
+int _uev_timer_stop(uev_t *w)
 {
 	if (!_uev_watcher_active(w))
 		return 0;
 
 	if (_uev_watcher_stop(w))
 		return -1;
+
+	return 0;
+}
+
+/**
+ * Stop and unregister a timer watcher
+ * @param w  Watcher to stop
+ *
+ * @return POSIX OK(0) or non-zero with @param errno set on error.
+ */
+int uev_timer_stop(uev_t *w)
+{
+	int rc;
+
+	rc = _uev_timer_stop(w);
+	if (rc)
+		return rc;
+
+	/* Remove from internal list */
+	_UEV_REMOVE(w, w->ctx->watchers);
 
 	return 0;
 }

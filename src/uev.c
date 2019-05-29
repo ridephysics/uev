@@ -312,7 +312,7 @@ int uev_run(uev_ctx_t *ctx, int flags)
 						w->u.t.timeout = 0;
 
 					if (!w->u.t.timeout)
-						uev_timer_stop(w);
+						_uev_timer_stop(w);
 					else {
 						w->u.t.deadline = now + w->u.t.period;
 					}
