@@ -182,7 +182,6 @@ int uev_init(uev_ctx_t *ctx)
  *
  * @return POSIX OK(0) or non-zero with @param errno set on error.
  */
-#if 0
 int uev_exit(uev_ctx_t *ctx)
 {
 	uev_t *w;
@@ -205,6 +204,7 @@ int uev_exit(uev_ctx_t *ctx)
 			break;
 
 		case UEV_TIMER_TYPE:
+		case UEV_TIMER_TS_TYPE:
 			uev_timer_stop(w);
 			break;
 
@@ -215,14 +215,11 @@ int uev_exit(uev_ctx_t *ctx)
 	}
 
 	ctx->watchers = NULL;
-	ctx->running = 0;
-	if (ctx->fd > -1)
-		close(ctx->fd);
-	ctx->fd = -1;
+	atomic_store(&ctx->running, 0);
+	vEventGroupDelete(ctx->egh);
 
 	return 0;
 }
-#endif
 
 /**
  * Start the event loop
