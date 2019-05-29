@@ -34,12 +34,14 @@
 #define portYIELD_FROM_ISR portYIELD
 #endif
 
+/* Private to libuEv, do not use directly! */
 void _uev_lock_init(UEV_LOCK *l) {
 #ifndef CONFIG_TARGET_PLATFORM_ESP8266
 	vPortCPUInitializeMutex(l);
 #endif
 }
 
+/* Private to libuEv, do not use directly! */
 void _uev_lock(UEV_LOCK *l) {
 #ifdef CONFIG_TARGET_PLATFORM_ESP8266
 	portENTER_CRITICAL();
@@ -48,6 +50,7 @@ void _uev_lock(UEV_LOCK *l) {
 #endif
 }
 
+/* Private to libuEv, do not use directly! */
 void _uev_unlock(UEV_LOCK *l) {
 #ifdef CONFIG_TARGET_PLATFORM_ESP8266
 	portEXIT_CRITICAL();
@@ -69,7 +72,6 @@ void _uev_set_flags(uev_ctx_t *ctx, const EventBits_t bits) {
 		xEventGroupSetBits(ctx->egh, bits);
 	}
 }
-
 
 /* Private to libuEv, do not use directly! */
 int _uev_watcher_init(uev_ctx_t *ctx, uev_t *w, uev_type_t type, uev_cb_t *cb, void *arg, int fd, int events)

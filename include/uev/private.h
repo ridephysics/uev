@@ -79,6 +79,7 @@ typedef enum {
 /* Event mask, used internally only. */
 #define UEV_EVENT_MASK  (UEV_ERROR | UEV_READ | UEV_WRITE)
 
+/* eventgroup flags */
 #define UEV_EG_BIT_IO (1 << 0)
 #define UEV_EG_BIT_EVENT (1 << 1)
 #define UEV_EG_BIT_TIMER (1 << 2)
@@ -137,10 +138,15 @@ int _uev_watcher_stop  (struct uev *w);
 int _uev_watcher_active(struct uev *w);
 int _uev_watcher_rearm (struct uev *w);
 
+/* Internal API for getting the uptime */
 uint64_t _uev_timer_now(void);
+
+/* Internal API for locks */
 void _uev_lock_init(UEV_LOCK *l);
 void _uev_lock(UEV_LOCK *l);
 void _uev_unlock(UEV_LOCK *l);
+
+/* Internal API for setting flags */
 void _uev_set_flags(uev_ctx_t *ctx, const EventBits_t bits);
 
 #endif /* LIBUEV_PRIVATE_H_ */

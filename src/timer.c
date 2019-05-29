@@ -30,6 +30,11 @@
 uint64_t esp8266_get_time_since_boot(void);
 #endif
 
+/**
+ * Get the uptime of the system
+ *
+ * @return the uptime in microseconds.
+ */
 uint64_t _uev_timer_now(void) {
 #ifdef CONFIG_TARGET_PLATFORM_ESP8266
 	return esp8266_get_time_since_boot();
@@ -44,12 +49,13 @@ uint64_t _uev_timer_now(void) {
 
 /**
  * Create and start a timer watcher
- * @param ctx      A valid libuEv context
- * @param w        Pointer to an uev_t watcher
- * @param cb       Callback function
- * @param arg      Optional callback argument
- * @param timeout  Timeout in milliseconds before @param cb is called
- * @param period   For periodic timers this is the period time that @param timeout is reset to
+ * @param ctx         A valid libuEv context
+ * @param w           Pointer to an uev_t watcher
+ * @param cb          Callback function
+ * @param arg         Optional callback argument
+ * @param timeout     Timeout in milliseconds before @param cb is called
+ * @param period      For periodic timers this is the period time that @param timeout is reset to
+ * @param threadsafe  Make this timer threadsafe. The processing will be slower.
  *
  * For one-shot timers you set @param period to zero and only use @param
  * timeout.  For periodic timers you likely set @param timeout to either
@@ -85,6 +91,19 @@ int uev_timer_init2(uev_ctx_t *ctx, uev_t *w, uev_cb_t *cb, void *arg, int timeo
 	return 0;
 }
 
+/**
+ * Create and start a timer watcher
+ * @param ctx         A valid libuEv context
+ * @param w           Pointer to an uev_t watcher
+ * @param cb          Callback function
+ * @param arg         Optional callback argument
+ * @param timeout     Timeout in milliseconds before @param cb is called
+ * @param period      For periodic timers this is the period time that @param timeout is reset to
+ *
+ * This function calls @func uev_timer_init2() with @param threadsafe set to 0
+ *
+ * @return POSIX OK(0) or non-zero with @param errno set on error.
+ */
 int uev_timer_init(uev_ctx_t *ctx, uev_t *w, uev_cb_t *cb, void *arg, int timeout, int period) {
 	return uev_timer_init2(ctx, w, cb, arg, timeout, period, 0);
 }
