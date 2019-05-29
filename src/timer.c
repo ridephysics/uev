@@ -23,6 +23,7 @@
  */
 
 #include <errno.h>
+#include <esp_timer.h>
 
 #include <uev/uev.h>
 

@@ -24,7 +24,6 @@
 
 #include <errno.h>
 #include <string.h>		/* memset() */
-#include <esp_timer.h>
 
 #include <uev/uev.h>
 
