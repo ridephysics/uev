@@ -205,7 +205,6 @@ int uev_exit(uev_ctx_t *ctx)
 			break;
 
 		case UEV_TIMER_TYPE:
-		case UEV_CRON_TYPE:
 			uev_timer_stop(w);
 			break;
 
@@ -258,10 +257,6 @@ int uev_run(uev_ctx_t *ctx, int flags)
 
 	/* Start all dormant timers */
 	_UEV_FOREACH(w, ctx->watchers) {
-#if 0
-		if (UEV_CRON_TYPE == w->type)
-			uev_cron_set(w, w->u.c.when, w->u.c.interval);
-#endif
 		if (w->type == UEV_TIMER_TYPE || w->type == UEV_TIMER_TS_TYPE) {
 			uev_timer_set(w, w->u.t.timeout, w->u.t.period);
 

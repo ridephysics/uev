@@ -73,7 +73,6 @@ typedef enum {
 	UEV_IO_TYPE = 1,
 	UEV_TIMER_TYPE,
 	UEV_TIMER_TS_TYPE,
-	UEV_CRON_TYPE,
 	UEV_EVENT_TYPE,
 } uev_type_t;
 
@@ -112,12 +111,6 @@ struct uev;
 								\
 	/* Arguments for different watchers */			\
 	union {							\
-		/* Cron watchers */				\
-		struct {					\
-			uint64_t when;				\
-			uint64_t interval;			\
-		} c;						\
-								\
 		/* Timer watchers, time in milliseconds */	\
 		struct {					\
 			UEV_LOCK lock;			\

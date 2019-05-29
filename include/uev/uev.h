@@ -43,7 +43,6 @@
 /* Macros */
 #define uev_io_active(w)     _uev_watcher_active(w)
 #define uev_timer_active(w)  _uev_watcher_active(w)
-#define uev_cron_active(w)   _uev_watcher_active(w)
 #define uev_event_active(w)  _uev_watcher_active(w)
 
 /* Event watcher */
@@ -83,11 +82,6 @@ int uev_timer_init2    (uev_ctx_t *ctx, uev_t *w, uev_cb_t *cb, void *arg, int t
 int uev_timer_set      (uev_t *w, int timeout, int period);
 int uev_timer_start    (uev_t *w);
 int uev_timer_stop     (uev_t *w);
-
-int uev_cron_init      (uev_ctx_t *ctx, uev_t *w, uev_cb_t *cb, void *arg, time_t when, time_t interval);
-int uev_cron_set       (uev_t *w, time_t when, time_t interval);
-int uev_cron_start     (uev_t *w);
-int uev_cron_stop      (uev_t *w);
 
 int uev_event_init     (uev_ctx_t *ctx, uev_t *w, uev_cb_t *cb, void *arg);
 int uev_event_post     (uev_t *w);
