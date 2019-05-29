@@ -23,9 +23,7 @@
  */
 
 #include <errno.h>
-#include <fcntl.h>		/* O_CLOEXEC */
 #include <string.h>		/* memset() */
-#include <unistd.h>		/* close(), read() */
 #include <esp_timer.h>
 
 #include <uev/uev.h>
@@ -240,7 +238,6 @@ int uev_exit(uev_ctx_t *ctx)
  * @return POSIX OK(0) upon successful termination of the event loop, or
  * non-zero on error.
  */
-#include <esp_log.h>
 int uev_run(uev_ctx_t *ctx, int flags)
 {
 	uev_t *w;
