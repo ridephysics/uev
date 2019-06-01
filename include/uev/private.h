@@ -70,6 +70,11 @@ typedef enum {
 	UEV_EVENT_TYPE,
 } uev_type_t;
 
+struct uev_list_node {
+    struct uev_list_node *prev;
+    struct uev_list_node *next;
+};
+
 /* Event mask, used internally only. */
 #define UEV_EVENT_MASK  (UEV_ERROR | UEV_READ | UEV_WRITE)
 
@@ -95,6 +100,10 @@ struct uev;
 /* This is used to hide all private data members in uev_t */
 #define uev_private_t                                           \
 	struct uev     *next, *prev;				\
+	struct {						\
+		struct uev_list_node node;			\
+		atomic_uint events;				\
+	} iot;							\
 								\
 	int             active;                                 \
 	int             events;                                 \
@@ -133,6 +142,9 @@ int _uev_watcher_rearm (struct uev *w);
 
 /* Internal iothread API */
 int _uev_iothread_init(void);
+void _uev_iothread_watcher_add(struct uev *w);
+void _uev_iothread_watcher_remove(struct uev *w);
+void _uev_iothread_interrupt(void);
 
 /* Internal timer API */
 uint64_t _uev_timer_now(void);

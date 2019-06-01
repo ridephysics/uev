@@ -2,8 +2,13 @@ set(COMPONENT_SRCS
     src/uev.c
     src/timer.c
     src/event.c
+    src/io.c
+    src/iothread.c
 )
 set(COMPONENT_ADD_INCLUDEDIRS
     include
+)
+set(COMPONENT_PRIV_REQUIRES
+    crosslog
 )
 register_component()

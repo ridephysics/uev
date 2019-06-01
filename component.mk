@@ -7,4 +7,6 @@ COMPONENT_SRCDIRS := \
 COMPONENT_OBJS := \
     src/uev.o \
     src/timer.o \
-    src/event.o
+    src/event.o \
+    src/io.o \
+    src/iothread.o

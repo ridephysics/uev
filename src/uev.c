@@ -26,6 +26,7 @@
 #include <string.h>		/* memset() */
 
 #include <uev/uev.h>
+#include "list.h"
 
 #ifndef portYIELD_FROM_ISR
 #define portYIELD_FROM_ISR portYIELD
@@ -83,6 +84,8 @@ int _uev_watcher_init(uev_ctx_t *ctx, uev_t *w, uev_type_t type, uev_cb_t *cb, v
 	w->arg    = arg;
 	w->events = events;
 
+	atomic_init(&w->iot.events, 0);
+
 	if (w->type == UEV_TIMER_TS_TYPE)
 		_UEV_INSERT(w, w->ctx->watchers);
 
@@ -107,6 +110,10 @@ int _uev_watcher_start(uev_t *w)
 
 	w->active = 1;
 
+	if (w->type == UEV_IO_TYPE) {
+		_uev_iothread_watcher_add(w);
+	}
+
 	if (w->type != UEV_TIMER_TS_TYPE) {
 		/* Add to internal list for bookkeeping */
 		_UEV_INSERT(w, w->ctx->watchers);
@@ -127,6 +134,10 @@ int _uev_watcher_stop(uev_t *w)
 		return 0;
 
 	w->active = 0;
+
+	if (w->type == UEV_IO_TYPE) {
+		_uev_iothread_watcher_remove(w);
+	}
 
 	if (w->type != UEV_TIMER_TS_TYPE) {
 		/* Remove from internal list */
@@ -153,9 +164,16 @@ int _uev_watcher_active(uev_t *w)
  */
 int uev_init(uev_ctx_t *ctx)
 {
+	int rc;
+
 	if (!ctx) {
 		errno = EINVAL;
 		return -1;
+	}
+
+	rc = _uev_iothread_init();
+	if (rc) {
+		return rc;
 	}
 
 	memset(ctx, 0, sizeof(*ctx));
@@ -320,12 +338,30 @@ int uev_run(uev_ctx_t *ctx, int flags)
 				break;
 			}
 
+			case UEV_IO_TYPE: {
+				if (!(bits & UEV_EG_BIT_IO))
+					break;
+
+				unsigned int ioevents = atomic_load(&w->iot.events);
+				if (ioevents) {
+					events |= ioevents;
+					runcb = true;
+				}
+				break;
+			}
+
 			default:
 				continue;
 			}
 
-			if (runcb && w->cb)
+			if (runcb && w->cb) {
 				w->cb(w, w->arg, events & UEV_EVENT_MASK);
+
+				if (w->type == UEV_IO_TYPE) {
+					atomic_fetch_and(&w->iot.events, ~((unsigned int)events));
+					_uev_iothread_interrupt();
+				}
+			}
 		}
 
 		if (flags & UEV_ONCE)
