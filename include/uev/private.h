@@ -30,12 +30,6 @@
 #include <freertos/event_groups.h>
 #include <stdatomic.h>
 
-#ifdef CONFIG_TARGET_PLATFORM_ESP8266
-#define UEV_LOCK void *
-#else
-#define UEV_LOCK portMUX_TYPE
-#endif
-
 /*
  * List functions.
  */
@@ -114,7 +108,6 @@ struct uev;
 	union {							\
 		/* Timer watchers, time in milliseconds */	\
 		struct {					\
-			UEV_LOCK lock;			\
 			int timeout;				\
 			int period;				\
 			uint64_t deadline;			\
@@ -138,14 +131,16 @@ int _uev_watcher_stop  (struct uev *w);
 int _uev_watcher_active(struct uev *w);
 int _uev_watcher_rearm (struct uev *w);
 
+/* Internal iothread API */
+int _uev_iothread_init(void);
+
 /* Internal timer API */
 uint64_t _uev_timer_now(void);
 int _uev_timer_stop(struct uev *w);
 
 /* Internal API for locks */
-void _uev_lock_init(UEV_LOCK *l);
-void _uev_lock(UEV_LOCK *l);
-void _uev_unlock(UEV_LOCK *l);
+void _uev_critical_enter(void);
+void _uev_critical_exit(void);
 
 /* Internal API for setting flags */
 void _uev_set_flags(uev_ctx_t *ctx, const EventBits_t bits);

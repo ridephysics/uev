@@ -31,28 +31,25 @@
 #define portYIELD_FROM_ISR portYIELD
 #endif
 
-/* Private to libuEv, do not use directly! */
-void _uev_lock_init(UEV_LOCK *l) {
 #ifndef CONFIG_TARGET_PLATFORM_ESP8266
-	vPortCPUInitializeMutex(l);
+static portMUX_TYPE _uev_mux = portMUX_INITIALIZER_UNLOCKED;
 #endif
-}
 
 /* Private to libuEv, do not use directly! */
-void _uev_lock(UEV_LOCK *l) {
+void _uev_critical_enter(void) {
 #ifdef CONFIG_TARGET_PLATFORM_ESP8266
 	portENTER_CRITICAL();
 #else
-	portENTER_CRITICAL(l);
+	portENTER_CRITICAL(&_uev_mux);
 #endif
 }
 
 /* Private to libuEv, do not use directly! */
-void _uev_unlock(UEV_LOCK *l) {
+void _uev_critical_exit(void) {
 #ifdef CONFIG_TARGET_PLATFORM_ESP8266
 	portEXIT_CRITICAL();
 #else
-	portEXIT_CRITICAL(l);
+	portEXIT_CRITICAL(&_uev_mux);
 #endif
 }
 
@@ -297,7 +294,7 @@ int uev_run(uev_ctx_t *ctx, int flags)
 				uint64_t now = _uev_timer_now() / 1000;
 
 				if (w->type == UEV_TIMER_TS_TYPE) {
-					_uev_lock(&w->u.t.lock);
+					_uev_critical_enter();
 				}
 
 				if (now > 0 && w->u.t.deadline && now > w->u.t.deadline) {
@@ -318,7 +315,7 @@ int uev_run(uev_ctx_t *ctx, int flags)
 					next_deadline = w->u.t.deadline;
 
 				if (w->type == UEV_TIMER_TS_TYPE) {
-					_uev_unlock(&w->u.t.lock);
+					_uev_critical_exit();
 				}
 				break;
 			}
