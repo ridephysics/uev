@@ -34,7 +34,7 @@
 #define UEV_NONE        0
 #define UEV_ERROR       1
 #define UEV_READ        2
-#define UEV_WRITE       3
+#define UEV_WRITE       4
 
 /* Run flags */
 #define UEV_ONCE        1
