@@ -275,7 +275,7 @@ int uev_run(uev_ctx_t *ctx, int flags)
 		}
 	}
 
-	while (atomic_load(&ctx->running) && ctx->watchers) {
+	while (atomic_load(&ctx->running)) {
 		uint64_t now = _uev_timer_now() / 1000;
 		TickType_t tickstowait;
 
