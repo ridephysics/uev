@@ -1,7 +1,7 @@
 #include <uev/uev.h>
 #include "list.h"
 
-#include <esp_task.h>
+#include <lwip/opt.h>
 #include <sys/select.h>
 #include <sys/socket.h>
 
@@ -171,7 +171,7 @@ int _uev_iothread_init(void) {
 			return -1;
 		}
 
-		xrc = xTaskCreate(task_fn, "uev_iothread", 4096, NULL, ESP_TASK_MAIN_PRIO, &task);
+		xrc = xTaskCreate(task_fn, "uev_iothread", 4096, NULL, TCPIP_THREAD_PRIO, &task);
 		if (xrc != pdPASS) {
 			return -1;
 		}
