@@ -27,10 +27,6 @@
 
 #include <uev/uev.h>
 
-#ifdef CONFIG_TARGET_PLATFORM_ESP8266
-uint64_t esp8266_get_time_since_boot(void);
-#endif
-
 /**
  * Get the uptime of the system
  *
