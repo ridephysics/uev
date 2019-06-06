@@ -36,6 +36,9 @@
 #define UEV_READ        2
 #define UEV_WRITE       4
 
+/* for compatibility reasons */
+#define UEV_HUP         8
+
 /* Run flags */
 #define UEV_ONCE        1
 #define UEV_NONBLOCK    2
