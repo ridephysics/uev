@@ -161,20 +161,24 @@ task_end:
 	vTaskDelete(NULL);
 }
 
-int _uev_iothread_init(void) {
+/**
+ * Initialize global iothread
+ *
+ * @return POSIX OK(0) on success, or non-zero on error.
+ */
+int uev_iothread_init(void) {
 	BaseType_t xrc;
 
-	// TODO: if multiple threads create multiple eventloops this will fail
-	if (!task) {
-		fd_local = locsock_create(&sa_local);
-		if (fd_local < 0) {
-			return -1;
-		}
+	CROSSLOG_ASSERT(!task);
 
-		xrc = xTaskCreate(task_fn, "uev_iothread", 4096, NULL, TCPIP_THREAD_PRIO, &task);
-		if (xrc != pdPASS) {
-			return -1;
-		}
+	fd_local = locsock_create(&sa_local);
+	if (fd_local < 0) {
+		return -1;
+	}
+
+	xrc = xTaskCreate(task_fn, "uev_iothread", 4096, NULL, TCPIP_THREAD_PRIO, &task);
+	if (xrc != pdPASS) {
+		return -1;
 	}
 
 	return 0;

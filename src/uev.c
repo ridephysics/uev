@@ -164,16 +164,9 @@ int _uev_watcher_active(uev_t *w)
  */
 int uev_init(uev_ctx_t *ctx)
 {
-	int rc;
-
 	if (!ctx) {
 		errno = EINVAL;
 		return -1;
-	}
-
-	rc = _uev_iothread_init();
-	if (rc) {
-		return rc;
 	}
 
 	memset(ctx, 0, sizeof(*ctx));

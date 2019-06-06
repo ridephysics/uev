@@ -141,7 +141,6 @@ int _uev_watcher_active(struct uev *w);
 int _uev_watcher_rearm (struct uev *w);
 
 /* Internal iothread API */
-int _uev_iothread_init(void);
 void _uev_iothread_watcher_add(struct uev *w);
 void _uev_iothread_watcher_remove(struct uev *w);
 void _uev_iothread_interrupt(void);
