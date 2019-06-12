@@ -201,6 +201,16 @@ void _uev_iothread_watcher_remove(uev_t *w) {
 }
 
 void _uev_iothread_interrupt(void) {
+	ssize_t nbytes;
 	uint8_t b = 0x01;
-	sendto(fd_local, &b, sizeof(b), 0, (struct sockaddr *)&sa_local, sizeof(sa_local));
+
+	nbytes = sendto(fd_local, &b, sizeof(b), 0, (struct sockaddr *)&sa_local, sizeof(sa_local));
+	if (nbytes < 0) {
+		CROSSLOG_ERRNO("sendto");
+		return;
+	}
+	if (nbytes != sizeof(b)) {
+		CROSSLOGE("short write");
+		return;
+	}
 }
