@@ -63,7 +63,7 @@ void task_fn(void * ctx) {
 		FD_ZERO(&exceptfds);
 
 		FD_SET(fd_local, &readfds);
-		maxfd = fd_local + 1;
+		maxfd = fd_local;
 
 		_uev_critical_enter();
 		list_for_every_entry(&list, w, uev_t, iot.node) {
