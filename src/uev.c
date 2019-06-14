@@ -32,13 +32,13 @@
 #define portYIELD_FROM_ISR portYIELD
 #endif
 
-#ifndef CONFIG_TARGET_PLATFORM_ESP8266
+#if !defined(CONFIG_TARGET_PLATFORM_ESP8266) && !defined(CONFIG_IDF_TARGET_ESP8266)
 static portMUX_TYPE _uev_mux = portMUX_INITIALIZER_UNLOCKED;
 #endif
 
 /* Private to libuEv, do not use directly! */
 void _uev_critical_enter(void) {
-#ifdef CONFIG_TARGET_PLATFORM_ESP8266
+#if defined(CONFIG_TARGET_PLATFORM_ESP8266) || defined(CONFIG_IDF_TARGET_ESP8266)
 	portENTER_CRITICAL();
 #else
 	portENTER_CRITICAL(&_uev_mux);
@@ -47,7 +47,7 @@ void _uev_critical_enter(void) {
 
 /* Private to libuEv, do not use directly! */
 void _uev_critical_exit(void) {
-#ifdef CONFIG_TARGET_PLATFORM_ESP8266
+#if defined(CONFIG_TARGET_PLATFORM_ESP8266) || defined(CONFIG_IDF_TARGET_ESP8266)
 	portEXIT_CRITICAL();
 #else
 	portEXIT_CRITICAL(&_uev_mux);
