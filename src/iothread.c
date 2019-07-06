@@ -176,7 +176,11 @@ int uev_iothread_init(void) {
 		return -1;
 	}
 
+#if defined(CONFIG_LWIP_TCPIP_TASK_AFFINITY)
+	xrc = xTaskCreatePinnedToCore(task_fn, "uev_iothread", 4096, NULL, TCPIP_THREAD_PRIO, &task, CONFIG_LWIP_TCPIP_TASK_AFFINITY);
+#else
 	xrc = xTaskCreate(task_fn, "uev_iothread", 4096, NULL, TCPIP_THREAD_PRIO, &task);
+#endif
 	if (xrc != pdPASS) {
 		return -1;
 	}
