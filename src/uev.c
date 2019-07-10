@@ -86,8 +86,10 @@ int _uev_watcher_init(uev_ctx_t *ctx, uev_t *w, uev_type_t type, uev_cb_t *cb, v
 
 	atomic_init(&w->iot.events, 0);
 
-	if (w->type == UEV_TIMER_TS_TYPE)
+	if (w->type == UEV_TIMER_TS_TYPE) {
 		_UEV_INSERT(w, w->ctx->watchers);
+		ctx->watchers_changed = 1;
+	}
 
 	return 0;
 }
@@ -117,6 +119,7 @@ int _uev_watcher_start(uev_t *w)
 	if (w->type != UEV_TIMER_TS_TYPE) {
 		/* Add to internal list for bookkeeping */
 		_UEV_INSERT(w, w->ctx->watchers);
+		w->ctx->watchers_changed = 1;
 	}
 
 	return 0;
@@ -142,6 +145,7 @@ int _uev_watcher_stop(uev_t *w)
 	if (w->type != UEV_TIMER_TS_TYPE) {
 		/* Remove from internal list */
 		_UEV_REMOVE(w, w->ctx->watchers);
+		w->ctx->watchers_changed = 1;
 	}
 
 	return 0;
@@ -179,6 +183,7 @@ int uev_init(uev_ctx_t *ctx)
 	configASSERT(ctx->egh);
 
 	atomic_init(&ctx->running, 0);
+	ctx->watchers_changed = 0;
 
 	return 0;
 }
@@ -280,8 +285,9 @@ int uev_run(uev_ctx_t *ctx, int flags)
 			tickstowait = next_deadline ? ((next_deadline - now) / portTICK_PERIOD_MS) : 0;
 
 		EventBits_t bits = xEventGroupWaitBits(ctx->egh, UEV_EG_MASK, pdTRUE, pdFALSE, tickstowait);
+again:
 		next_deadline = 0xffffffffffffffff;
-
+		ctx->watchers_changed = 0;
 		_UEV_FOREACH(w, ctx->watchers) {
 			bool runcb = false;
 			int events = 0;
@@ -354,6 +360,9 @@ int uev_run(uev_ctx_t *ctx, int flags)
 					atomic_fetch_and(&w->iot.events, ~((unsigned int)events));
 					_uev_iothread_interrupt();
 				}
+
+				if (ctx->watchers_changed)
+					goto again;
 			}
 		}
 

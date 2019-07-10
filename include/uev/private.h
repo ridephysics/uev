@@ -92,6 +92,7 @@ typedef struct {
 	StaticEventGroup_t egb;
 #endif
 	struct uev     *watchers;
+	int             watchers_changed;
 } uev_ctx_t;
 
 /* Forward declare due to dependencys, don't try this at home kids. */
